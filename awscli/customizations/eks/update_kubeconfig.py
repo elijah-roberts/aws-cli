@@ -97,6 +97,12 @@ class UpdateKubeconfigCommand(BasicCommand):
             'help_text': ("Alias for the cluster context name. "
                           "Defaults to match cluster ARN."),
             'required': False
+        },
+        {
+            'name': 'user-alias',
+            'help_text': ("Alias for the generated user name. "
+                          "Defaults to match cluster ARN."),
+            'required': False
         }
     ]
 
@@ -118,7 +124,7 @@ class UpdateKubeconfigCommand(BasicCommand):
                            parsed_args.role_arn,
                            parsed_globals)
         new_cluster_dict = client.get_cluster_entry()
-        new_user_dict = client.get_user_entry(alias=parsed_args.alias)
+        new_user_dict = client.get_user_entry(user_alias=parsed_args.user_alias)
 
         config_selector = KubeconfigSelector(
             os.environ.get("KUBECONFIG", ""),
@@ -282,7 +288,7 @@ class EKSClient(object):
             ("name", arn)
         ])
 
-    def get_user_entry(self, alias=None):
+    def get_user_entry(self, user_alias=None):
         """
         Return a user entry generated using
         the previously obtained description.
@@ -291,7 +297,7 @@ class EKSClient(object):
         region = self._get_cluster_description().get("arn").split(":")[3]
 
         generated_user = OrderedDict([
-            ("name", alias or self._get_cluster_description().get("arn", "")),
+            ("name", user_alias or self._get_cluster_description().get("arn", "")),
             ("user", OrderedDict([
                 ("exec", OrderedDict([
                     ("apiVersion", API_VERSION),

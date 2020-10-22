@@ -277,7 +277,7 @@ class TestEKSClient(unittest.TestCase):
 
     def test_create_user_with_alias(self):
         self._correct_user_entry["name"] = "alias"
-        self.assertEqual(self._client.get_user_entry(alias="alias"),
+        self.assertEqual(self._client.get_user_entry(user_alias="alias"),
                          self._correct_user_entry)
         self._mock_client.describe_cluster.assert_called_once_with(
             name="ExampleCluster"
